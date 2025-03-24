@@ -72,9 +72,11 @@ namespace ImagesInDB {
                     foreach(DataRow row in tablesSchema.Rows) {
                         string tableName = row["TABLE_NAME"].ToString();
                         SqlDataAdapter dataAdapter = new($"SELECT * FROM {tableName}", connection);
-                        DataTable dataTable = new(tableName);
-                        dataAdapter.Fill(dataTable);
-                        dataSet.Tables.Add(dataTable);
+                        try { //error handling for tables that can't be read
+                            DataTable dataTable = new(tableName);
+                            dataAdapter.Fill(dataTable);
+                            dataSet.Tables.Add(dataTable);
+                        } catch { }
                     }
                 } catch(Exception ex) {
                     Console.WriteLine($"MDF Error: {ex.Message}");
@@ -85,6 +87,34 @@ namespace ImagesInDB {
                 }
                 return dataSet;
             }
+        }
+        public static DataSet GetXMLDataSet(string path) {
+            DataSet dataSet = new();
+            try {
+                dataSet.ReadXml(path);
+            } catch(Exception ex) {
+                Console.WriteLine($"XML Error: {ex.Message}");
+            }
+            return dataSet;
+        }
+        public static DataSet GetDBFDataSet(string path) {
+            DataSet dataSet = new();
+            string connectionString = $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={path};Extended Properties=dBASE IV;";
+            using(OleDbConnection connection = new(connectionString)) {
+                try {
+                    connection.Open();
+                    foreach(string file in Directory.GetFiles(path, "*.dbf")) {
+                        string tableName = Path.GetFileNameWithoutExtension(file);
+                        string query = $"SELECT * FROM [{tableName}]";
+
+                        OleDbDataAdapter adapter = new(query, connection);
+                        adapter.Fill(dataSet, tableName);
+                    }
+                } catch(Exception ex) {
+                    Console.WriteLine($"DBF Error: {ex.Message}");
+                }
+            }
+            return dataSet;
         }
         public static void GetSQLTables(FileInfo fi, string prefix, Action<string, string, string, List<object>> saveImages) {
             string connectionString = $"Data Source={fi.FullName};";

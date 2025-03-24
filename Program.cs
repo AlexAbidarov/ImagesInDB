@@ -1,4 +1,2 @@
-﻿using ImagesInDB;
-
-[assembly: System.Runtime.Versioning.SupportedOSPlatform("windows")]
-DBImages.CreateDirImages(Environment.GetCommandLineArgs());
+﻿[assembly: System.Runtime.Versioning.SupportedOSPlatform("windows")]
+ImagesInDB.DBImages.CreateDirImages(Environment.GetCommandLineArgs());

@@ -7,6 +7,7 @@ Allows you to extract images from the following database formats
 - mdf
 - sqlite3
 - db
+- dbf 
 
 ## How to use ?
 

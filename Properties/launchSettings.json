@@ -2,7 +2,7 @@
   "profiles": {
     "ImagesInDB": {
       "commandName": "Project",
-      "commandLineArgs": "f:\\DB"
+      "commandLineArgs": "F:\\DB"
     }
   }
 }
