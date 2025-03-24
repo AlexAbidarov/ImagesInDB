@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ImagesInDB": {
+      "commandName": "Project",
+      "commandLineArgs": "f:\\DB"
+    }
+  }
+}
