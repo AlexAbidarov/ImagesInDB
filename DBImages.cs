@@ -39,10 +39,22 @@ namespace ImagesInDB {
             string folderName = $"DB_{name}";
             Console.WriteLine($"Saving images to {folderName}: {dt.TableName} table");
             foreach(DataRow dr in dt.Rows) {
+                i += 1;
                 foreach(DataColumn dc in dt.Columns) {
-                    if(dc.DataType == typeof(byte[]) && dr[dc] is not System.DBNull) {
+                    if(dr[dc] is System.DBNull) continue;
+                    string fileName = @$"{prefix}\{folderName}\{dt.TableName}_{dc.ColumnName}_{i:D2}";
+                    if(dc.DataType == typeof(byte[])) {
                         byte[] image = (byte[])dr[dc];
-                        SaveImage(image, @$"{prefix}\{folderName}\{dt.TableName}_{dc.ColumnName}_{++i:D2}");
+                        SaveImage(image, fileName);
+                    }
+                    else if(dc.DataType == typeof(string)) {
+                        string base64String = (string)dr[dc];
+                        if(base64String.Length > 255) {
+                            try {
+                                byte[] bytes = Convert.FromBase64String(base64String);
+                                SaveImage(bytes, fileName);
+                            } catch { }
+                        }
                     }
                 }
             }
